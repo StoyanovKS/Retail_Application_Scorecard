@@ -1,0 +1,72 @@
+model:
+  logistic_model_path: models/logistic_model.pkl
+  woe_bins_path: models/woe_bins.pkl
+  scorecard_points_path: models/scorecard_points.csv
+
+target:
+  name: target_bad
+  bad_value: 1
+  good_value: 0
+  definition: "1 = Charged Off, 0 = Fully Paid"
+
+features:
+  final_model_features:
+    - loan_to_income
+    - dti
+    - revol_util
+    - annual_inc
+    - inq_last_6mths
+    - acc_open_past_24mths
+    - mort_acc
+    - purpose
+    - home_ownership
+    - term
+  cap_rules:
+    annual_inc:
+      lower_p01: 22000.0
+      upper_p99: 256000.0
+    dti:
+      lower_p01: 2.5
+      upper_p99: 37.92
+    revol_util:
+      lower_p01: 2.5
+      upper_p99: 98.0
+    revol_bal:
+      lower_p01: 407.0
+      upper_p99: 89594.0
+    loan_amnt:
+      lower_p01: 1900.0
+      upper_p99: 35000.0
+    loan_to_income:
+      lower_p01: 0.027027027
+      upper_p99: 0.479591837
+    credit_history_months:
+      lower_p01: 48.0
+      upper_p99: 455.0
+    credit_history_years:
+      lower_p01: 4.0
+      upper_p99: 37.916666667
+    open_acc:
+      lower_p01: 4.0
+      upper_p99: 30.0
+    total_acc:
+      lower_p01: 7.0
+      upper_p99: 62.0
+    inq_last_6mths:
+      lower_p01: 0.0
+      upper_p99: 4.0
+    delinq_2yrs:
+      lower_p01: 0.0
+      upper_p99: 4.0
+    pub_rec:
+      lower_p01: 0.0
+      upper_p99: 3.0
+    mort_acc:
+      lower_p01: 0.0
+      upper_p99: 8.0
+
+score_scaling:
+  base_score: 600.0
+  base_odds: 20.0
+  pdo: 50.0
+  recommended_pd_cutoff: 0.20
