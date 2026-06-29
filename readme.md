@@ -314,6 +314,22 @@ The final modelling framework consists of:
 
 ---
 
+# Conclusion
+
+The final selected model is a WOE-transformed Logistic Regression scorecard supported by validation, stability analysis, challenger benchmarking and score scaling.
+
+## Model Performance
+
+| Sample | AUROC | Gini | KS |
+| --- | ---: | ---: | ---: |
+| Train | 0.692 | 0.385 | 0.278 |
+| Validation | 0.672 | 0.343 | 0.245 |
+| OOT | 0.667 | 0.334 | 0.247 |
+
+The final scorecard demonstrates stable performance across Train, Validation and Out-of-Time samples with limited evidence of overfitting.
+
+---
+
 # Production Python Package
 
 The project is prepared to be extended into a production-ready Python package under `src/scorecard`.
