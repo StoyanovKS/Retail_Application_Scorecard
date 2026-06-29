@@ -541,6 +541,101 @@ The tests validate that:
 
 ---
 
+# Scoring From a CSV File
+
+The production package supports batch scoring from a CSV file. The expected workflow is to place input files in the `inputs/` folder and write scored files to the `outputs/` folder.
+
+```text
+inputs/
+`-- sample.csv
+
+outputs/
+`-- scored_sample.csv
+```
+
+The repository includes an example input file:
+
+```text
+inputs/sample.csv
+```
+
+This file contains two example loan application records with the minimum fields required by the current scorecard pipeline.
+
+## Required Input Columns
+
+The scoring CSV should contain the following columns:
+
+| Column | Purpose |
+| --- | --- |
+| `issue_d` | Loan issue or origination date used for date-based feature engineering |
+| `earliest_cr_line` | Earliest credit line date used to calculate credit history length |
+| `term` | Loan term, for example `36 months` or `60 months` |
+| `loan_amnt` | Requested loan amount |
+| `annual_inc` | Applicant annual income |
+| `dti` | Debt-to-income ratio |
+| `revol_util` | Revolving credit utilization |
+| `inq_last_6mths` | Number of recent credit inquiries |
+| `acc_open_past_24mths` | Number of accounts opened in the past 24 months |
+| `mort_acc` | Number of mortgage accounts |
+| `purpose` | Loan purpose |
+| `home_ownership` | Applicant home ownership status |
+
+The package will use these fields to create engineered variables, apply WOE transformation, predict probability of default and calculate the final score.
+
+## Run Scoring
+
+Run the command from the project root:
+
+```bash
+scorecard-predict --input inputs/sample.csv --output outputs/scored_sample.csv
+```
+
+If the package has not been installed as a command line tool yet, install it first:
+
+```bash
+pip install -e ".[dev]"
+```
+
+Alternatively, the same scoring logic can be called from Python:
+
+```python
+from scorecard.predict import predict_file
+
+predict_file(
+    input_path="inputs/sample.csv",
+    output_path="outputs/scored_sample.csv",
+)
+```
+
+## Expected Output
+
+The scored file will be created here:
+
+```text
+outputs/scored_sample.csv
+```
+
+The output file keeps the original input columns and appends two scoring columns:
+
+| Output column | Meaning |
+| --- | --- |
+| `pd_pred` | Predicted probability of default |
+| `score` | Credit score scaled from the predicted PD |
+
+Example output structure:
+
+```text
+issue_d,earliest_cr_line,term,loan_amnt,...,home_ownership,pd_pred,score
+2017-01-01,2010-01-01,36 months,10000,...,MORTGAGE,0.127798,522.443703
+2018-03-01,2012-05-01,60 months,25000,...,RENT,0.467414,393.319247
+```
+
+For production batch scoring, place any new application file in `inputs/`, choose an output name under `outputs/`, and run the same command with the new paths.
+
+
+--- 
+
+
 # Production Scoring Pipeline
 
 The intended production scoring flow is:
